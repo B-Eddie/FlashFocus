@@ -1,10 +1,4 @@
-.league-spartan-1 {
-    font-family: "League Spartan";
-    font-optical-sizing: auto;
-    font-weight: 200;
-    font-style: normal;
-}
-
+/* Reset margin and padding for all elements */
 * {
     margin: 0;
     padding: 0;
@@ -36,7 +30,6 @@ nav a {
     text-decoration: none;
     color: var(--1);
     font-size: 20pt;
-
     padding-right: 3em;
 }
 
@@ -52,8 +45,8 @@ main {
 main p {
     font-weight: 700;
     font-size: 30px;
-    padding-left: 32em;
-    padding-right: 32em;
+    padding-left: 1em; /* Adjusted padding */
+    padding-right: 1em; /* Adjusted padding */
     padding-top: 3em;
     color: var(--2);
 }
@@ -81,5 +74,3 @@ main p {
     left: .3em;
     top: 0.5em;
 }
-
-/* hello
