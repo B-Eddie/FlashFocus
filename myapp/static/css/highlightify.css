@@ -40,6 +40,10 @@ main h1 {
     height: 48px;
 }
 
+#upload-button:hover {
+    cursor: pointer;
+}
+
 #upload-button i {
     background-color: var(--2);
     display: inline-block;
