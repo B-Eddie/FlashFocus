@@ -33,6 +33,7 @@ main p {
     padding-top: 3em;
     color: var(--2);
 }
+
 #MovedAboutUs {
     position: relative;
     top: 250px;
