@@ -1,5 +1,5 @@
 body {
-    overflow: hidden; /* Disable scrolling for the entire page */
+    overflow: scroll !important;
     background-color: var(--4);
 }
 
