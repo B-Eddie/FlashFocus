@@ -17,6 +17,7 @@ main p {
     font-size: 30px;
     padding-left: 1em; /* Adjusted padding */
     padding-right: 1em; /* Adjusted padding */
+    padding-bottom: 10em;
     padding-top: 3em;
     color: var(--2);
 }
