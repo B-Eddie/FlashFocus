@@ -1,0 +1,16 @@
+header {
+    display: flex;
+    padding: 1em;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    background-color: var(--3);
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--1);
+    font-size: 20pt;
+    padding-right: 3em;
+}
