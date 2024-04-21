@@ -50,3 +50,13 @@ main p {
     padding-top: 3em;
     color: var(--2);
 }
+#MovedAboutUs {
+    position: relative;
+    top: 250px;
+    left: -500px;
+    max-width: 600px; /* Adjusted maximum width */
+    margin-left: auto; /* Center the paragraph horizontally */
+    margin-right: auto; /* Center the paragraph horizontally */
+    padding-left: 20px; /* Add left padding for better readability */
+    padding-right: 20px; /* Add right padding for better readability */
+}
