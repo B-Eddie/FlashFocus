@@ -6,6 +6,7 @@ header {
     justify-content: space-between;
     flex-wrap: nowrap;
     background-color: var(--3);
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 4px;
 }
 
 nav a {
