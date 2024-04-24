@@ -35,6 +35,7 @@ def upload_file():
     if file:
         filename = generate_unique_filename(file.filename)
         file.save(os.path.join(UPLOAD_FOLDER, filename))
-        return jsonify({'message': 'File uploaded successfully', 'filename': filename})
+        return jsonify({'filename': file.filename})
     else:
         return jsonify({'error': 'Upload failed'})
+    

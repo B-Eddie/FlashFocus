@@ -66,30 +66,45 @@ document.addEventListener("DOMContentLoaded", (event) => {
     }
 
     function displayPDF(file) {
+        if (!file) {
+          console.error('No file selected for display');
+          return;  // Exit the function if no file
+        }
+      
         const reader = new FileReader();
         reader.onload = function(event) {
-            const typedarray = new Uint8Array(event.target.result);
-            pdfjsLib.getDocument(typedarray).promise.then(pdf => {
-                const container = document.createElement('div');
-                container.classList.add('pdf-container');
-                // Loop through each page and render it onto a canvas element
-                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                    pdf.getPage(pageNum).then(page => {
-                        const canvas = document.createElement('canvas');
-                        const context = canvas.getContext('2d');
-                        const viewport = page.getViewport({ scale: 1 });
-                        canvas.width = viewport.width;
-                        canvas.height = viewport.height;
-                        page.render({ canvasContext: context, viewport: viewport });
-                        container.appendChild(canvas);
-                    });
-                }
-                // Clear the main section and append the PDF container
-                const mainSection = document.querySelector('main');
-                mainSection.innerHTML = '';
-                mainSection.appendChild(container);
-            });
+          const typedarray = new Uint8Array(event.target.result);
+          pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+            const container = document.createElement('div');
+            container.classList.add('pdf-container');
+      
+            // Loop through each page number
+            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+              pdf.getPage(pageNum).then(page => {
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                const viewport = page.getViewport({ scale: 1 });
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+      
+                // Render the page
+                page.render({ canvasContext: context, viewport: viewport });
+      
+                // Add styling for vertical stacking
+                canvas.style.display = 'block'; // Set display to block for stacking
+                canvas.style.marginBottom = '10px'; // Add margin for spacing (optional)
+      
+                container.appendChild(canvas);
+              });
+            }
+      
+            // Clear the main section and append the PDF container (after all pages are processed)
+            const mainSection = document.querySelector('main');
+            mainSection.innerHTML = '';
+            mainSection.appendChild(container);
+          });
         };
         reader.readAsArrayBuffer(file);
-    }
+      }
+      
 });
