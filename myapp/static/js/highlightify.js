@@ -105,41 +105,40 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
                 let startX, startY;
 
-        function handleMouseDown(event) {
-            startX = event.offsetX;
-            startY = event.offsetY;
-        }
+                function handleMouseDown(event) {
+                    startX = event.offsetX;
+                    startY = event.offsetY;
+                }
 
-        function handleMouseUp(event) {
-            const endX = event.offsetX;
-            const endY = event.offsetY;
+                function createHighlightElement(rect) {
+                    const highlightElement = document.createElement('div');
+                    highlightElement.style.position = 'absolute';
+                    highlightElement.style.top = rect.top + 'px';
+                    highlightElement.style.left = rect.left + 'px';
+                    highlightElement.style.width = rect.width + 'px';
+                    highlightElement.style.height = rect.height + 'px';
+                    highlightElement.style.backgroundColor = '#FFFF00'; // Highlight color
+                  
+                    // Append the highlight element to the container
+                    canvas.parentNode.appendChild(highlightElement);
+                  }
+                  
 
-            const selectionRect = {
-                x: Math.min(startX, endX),
-                y: Math.min(startY, endY),
-                width: Math.abs(startX - endX),
-                height: Math.abs(startY - endY),
-            };
-            
-            function createHighlightAnnotation(rect) {
-                const annotation = new PDFAJS.Annotation({
-                    subtype: 'Highlight',
-                    rect: rect,
-                    color: '#FFFF00',
-                });
-    
-                pdfDocument.addAnnotation(annotation);
-                pdfDocument.annotationStorage.add(annotation); // Might be required depending on library version
-                console.log(annotation);
-                // Update the rendered annotations on the canvas (specific to pdfjsLib.Annotation usage)
-                pdfViewer.update(); // Assuming you have a pdfViewer instance (if using a viewer component)
-    
-                // Add the highlighted text to the highlightData array (optional)
-                const highlightedText = getHighlightedText(rect);
-                highlightData.push(highlightedText);
-            }
-            createHighlightAnnotation(selectionRect);
-        }
+                function handleMouseUp(event) {
+                    const endX = event.offsetX;
+                    const endY = event.offsetY;
+                  
+                    const selectionRect = {
+                      x: Math.min(startX, endX),
+                      y: Math.min(startY, endY),
+                      width: Math.abs(startX - endX),
+                      height: Math.abs(startY - endY),
+                    };
+                  
+                    createHighlightElement(selectionRect);
+                  }
+                  
+                  
                 const canvas = document.getElementById('pdf-container');
                 canvas.addEventListener('mousedown', handleMouseDown);
                 canvas.addEventListener('mouseup', handleMouseUp);
@@ -197,7 +196,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         // canvas.addEventListener('mousedown', handleMouseDown);
         // canvas.addEventListener('mouseup', handleMouseUp);
 
-        
+
 
         // function createHighlightAnnotation(rect) {
         //     const annotation = new PDFAJS.Annotation({
@@ -234,7 +233,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
                         // Handle the case where item is undefined
                         console.log('uh oh');
                     }
-                    
+
                     const tx = transform[4]; // Get x-translation for positioning
                     const ty = transform[5]; // Get y-translation for positioning
 
