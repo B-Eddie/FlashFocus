@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
             // Upload the file
             const xhr = new XMLHttpRequest();
-            xhr.open('POST', 'your-upload-endpoint-url-here');
+            xhr.open('POST', '/upload');
             xhr.upload.onprogress = function(event) {
                 if (event.lengthComputable) {
                     const percentComplete = (event.loaded / event.total) * 100;
