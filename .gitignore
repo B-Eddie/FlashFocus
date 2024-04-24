@@ -1,7 +1,4 @@
 venv/
-<<<<<<< HEAD
-virtualenv/
-=======
+uploads/
 virtualenv/
 __pychache__
->>>>>>> 9147257 (uhm testing???)
