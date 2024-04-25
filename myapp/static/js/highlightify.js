@@ -1,9 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const PDFJSLib = window.pdfjsLib;
     document.getElementById('upload-button').addEventListener('click', handleUploadButtonClick);
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.1.392/pdf.worker.min.js';
 
     let pdfContainer;
-    console.log("SIEFJ");
+    let highlightData = []; // Array to store highlight data
+
     function handleUploadButtonClick() {
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
@@ -30,69 +32,94 @@ document.addEventListener("DOMContentLoaded", () => {
         pdfjsLib.getDocument(pdfData).promise.then(pdf => {
             pdfContainer = document.createElement('div');
             pdfContainer.setAttribute('id', 'pdf-container');
-    
+
             // Loop through each page number
             for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
                 pdf.getPage(pageNum).then(page => {
-                    page.getTextContent().then(textContent => {
-                        const pageDiv = document.createElement('div');
-                        pageDiv.classList.add('page');
-    
-                        // Group text items by y-coordinate to simulate text lines
-                        const lines = groupTextItemsByY(textContent.items);
-                        lines.reverse();
-    
-                        // Iterate through lines and create HTML elements
-                        lines.forEach(line => {
-                            const lineDiv = document.createElement('div');
-                            lineDiv.classList.add('line');
-    
-                            // Sort text items by x-coordinate to maintain order
-                            line.sort((a, b) => a.transform[4] - b.transform[4]);
-    
-                            // Iterate through text items in the line
-                            line.forEach(item => {
-                                const textElement = document.createElement('span');
-                                textElement.textContent = item.str;
-    
-                                // Adjust font size based on height (optional)
-                                textElement.style.fontSize = `${item.height}px`;
-    
-                                // Adjust transformation (optional)
-                                textElement.style.transform = `translate(${item.transform[4]}px, ${item.transform[5]}px)`;
-    
-                                // Append text element to line div
-                                lineDiv.appendChild(textElement);
+                    const pageDiv = document.createElement('div');
+                    pageDiv.classList.add('page');
+                    
+                    const textLayer = document.createElement('div');
+                    textLayer.classList.add('text-layer');
+                    textLayer.style.position = 'absolute';
+                    textLayer.style.top = 0;
+                    textLayer.style.left = 0;
+                    textLayer.style.width = '100%';
+                    textLayer.style.height = '100%';
+                    pageDiv.appendChild(textLayer);
+
+                    const viewport = page.getViewport({ scale: 1 });
+                    const canvas = document.createElement('canvas');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    const context = canvas.getContext('2d');
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    
+                    page.render(renderContext).promise.then(() => {
+                        page.getTextContent().then(textContent => {
+                            console.log('Text Content:', textContent);
+                            console.log(textContent);
+                            for (let i = 0; i < textContent.items.length; i++) {
+                                console.log(textContent.items[i].str);
+                            }
+                            const textLayerDiv = document.createElement('div');
+                            textLayerDiv.classList.add('text-layer');
+                            textLayer.appendChild(textLayerDiv);
+                            console.log("GI");
+                            PDFJSLib.renderTextLayer({
+                                textContent: textContent,  // Existing parameter
+                                container: textLayerDiv,
+                                viewport: viewport,
+                                textDivs: [],
+                                textContentSource: page  // New parameter (specifies the page object)
                             });
-    
-                            // Append line div to page div
-                            pageDiv.appendChild(lineDiv);
+                            console.log("GI");
                         });
-    
-                        // Append page div to PDF container
-                        pdfContainer.appendChild(pageDiv);
                     });
+
+                    // Add event listener to capture text selection on the text layer
+                    textLayer.addEventListener('mouseup', event => {
+                        const rect = textLayer.getBoundingClientRect();
+                        const mouseX = event.clientX - rect.left;
+                        const mouseY = event.clientY - rect.top;
+                        const selectedText = getSelectedText(textLayer, mouseX, mouseY);
+                        if (selectedText) {
+                            console.log('Selected Text:', selectedText);
+                            // Implement highlighting functionality here using the selectedText and its position within the textLayerDiv
+                            highlightData.push({ page: pageNum, text: selectedText });
+                            console.log('Highlight data:', highlightData);
+                            // You can send the highlight data to the server here
+                        }
+                    });
+
+                    // Append canvas to PDF container
+                    pageDiv.appendChild(canvas);
+                    pdfContainer.appendChild(pageDiv);
                 });
             }
-    
+
             // Clear the main section and append the PDF container (after all pages are processed)
             const mainSection = document.querySelector('main');
             mainSection.innerHTML = '';
             mainSection.appendChild(pdfContainer);
         });
     }
-    
-    // Function to group text items by y-coordinate to simulate text lines
-    function groupTextItemsByY(textItems) {
-        const lines = [];
-        textItems.forEach(item => {
-            const y = Math.round(item.transform[5]);
-            if (!lines[y]) {
-                lines[y] = [];
+
+    // Function to get the selected text from the text layer
+    function getSelectedText(textLayer, mouseX, mouseY) {
+        const textDivs = textLayer.querySelectorAll('.textLayer div');
+
+        for (let i = 0; i < textDivs.length; i++) {
+            const textDiv = textDivs[i];
+            const rect = textDiv.getBoundingClientRect();
+            if (mouseX >= rect.left && mouseX <= rect.right &&
+                mouseY >= rect.top && mouseY <= rect.bottom) {
+                return textDiv.textContent.trim();
             }
-            lines[y].push(item);
-        });
-        return lines.filter(line => line !== undefined);
+        }
+        return null; // No text found at the selected coordinates
     }
-    
 });
